@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Micro Creations — Explainable Repo Intelligence</title>
+  <meta name="description"
+    content="Micro Creations builds ContextLoom, a local-first platform for explainable code intelligence. Hybrid retrieval, zero cloud dependency, full transparency.">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://microcreations.co.uk">
+
+  <!-- Favicon (placeholder - replace with real .ico/.png) -->
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%230ea5e9' width='32' height='32' rx='6'/%3E%3Ctext x='50%25' y='50%25' fill='white' font-family='monospace' font-size='20' text-anchor='middle' dominant-baseline='middle'%3ECL%3C/text%3E%3C/svg%3E">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Micro Creations — ContextLoom">
+  <meta property="og:description"
+    content="Explainable repo intelligence for developers. Local-first. Transparent. Powerful.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://microcreations.co.uk">
+  <meta property="og:image"
+    content="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'%3E%3Crect fill='%230f172a' width='1200' height='630'/%3E%3Ctext x='50%25' y='50%25' fill='%2338bdf8' font-family='monospace' font-size='48' text-anchor='middle' dominant-baseline='middle'%3EContextLoom%3C/text%3E%3C/svg%3E">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Micro Creations Ltd",
+    "url": "https://microcreations.co.uk",
+    "brand": {
+      "@type": "Product",
+      "name": "ContextLoom",
+      "description": "Explainable repo intelligence platform for developers",
+      "applicationCategory": "DeveloperApplication"
+    }
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #fafafa;
+      --surface: #ffffff;
+      --surface-2: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --text-inverse: #f8fafc;
+      --primary: #0f172a;
+      --primary-hover: #1e293b;
+      --accent: #0ea5e9;
+      --accent-hover: #0284c7;
+      --success: #10b981;
+      --border: #e2e8f0;
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+      --text-4xl: 2.25rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-12: 3rem;
+      --radius: 0.75rem;
+      --radius-lg: 1rem;
+      --max-w: 720px;
+      --transition: 150ms ease;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0f19;
+        --surface: #151a25;
+        --surface-2: #1e293b;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-inverse: #0f172a;
+        --primary: #f8fafc;
+        --primary-hover: #e2e8f0;
+        --accent: #38bdf8;
+        --accent-hover: #0ea5e9;
+        --border: #334155;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: var(--text-base);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+    }
+    
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--space-4);
+    }
+
+    .section {
+      padding: var(--space-12) 0;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .header {
+        background: rgba(11, 15, 25, 0.8);
+      }
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) 0;
+    }
+
+    .logo {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: var(--text-lg);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    /* Hero */
+    .hero {
+      padding: var(--space-12) 0 var(--space-8);
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--surface-2);
+      padding: var(--space-2) var(--space-4);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: var(--space-6);
+      border: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      font-size: clamp(var(--text-3xl), 8vw, var(--text-4xl));
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: var(--space-4);
+    }
+
+    .hero p {
+      font-size: clamp(var(--text-lg), 4vw, var(--text-xl));
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto var(--space-8);
+    }
+
+    /* Buttons */
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: center;
+      margin-bottom: var(--space-12);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all var(--transition);
+      border: 1px solid transparent;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--text-inverse);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-2);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-ghost:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Platform Showcase */
+    .showcase {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin: var(--space-8) auto;
+      box-shadow: var(--shadow);
+    }
+
+    .showcase-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .showcase-title {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: var(--text-lg);
+    }
+
+    .showcase-grid {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .showcase-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-3);
+      align-items: start;
+    }
+
+    .showcase-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      display: grid;
+      place-items: center;
+      font-size: var(--text-lg);
+      flex-shrink: 0;
+    }
+
+    .showcase-content h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-1);
+    }
+
+    .showcase-content p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Value Props */
+    .values {
+      display: grid;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+
+    .value-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 15px;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .value-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .value-icon {
+      font-size: var(--text-2xl);
+      margin-bottom: var(--space-3);
+    }
+
+    .value-card h3 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .value-card p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    /* Simple Architecture */
+    .architecture {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+
+    .arch-title {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      margin-bottom: var(--space-4);
+      text-align: center;
+    }
+
+    .arch-steps {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .arch-step {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: var(--surface-2);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius);
+      border: 1px dashed var(--border);
+    }
+
+    .arch-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Demo Placeholder */
+    .demo-teaser {
+      background: var(--surface-2);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      text-align: center;
+      margin: var(--space-8) 0;
+    }
+
+    .demo-teaser h3 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .demo-teaser p {
+      color: var(--text-muted);
+      margin-bottom: var(--space-4);
+    }
+
+    .demo-mockup {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: left;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* Licensing Clarity */
+    .licensing {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 15px;
+      margin: var(--space-8) 0;
+      font-size: 0.875rem;
+    }
+
+    .licensing-grid {
+      display: grid;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+
+    .licensing-item {
+      display: flex;
+      align-items: start;
+      gap: var(--space-2);
+    }
+
+    .licensing-icon {
+      color: var(--success);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Legal Footer */
+    .legal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 15px;
+      margin: var(--space-8) 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .legal strong {
+      display: block;
+      color: var(--text);
+      margin-bottom: var(--space-2);
+    }
+
+    .legal a {
+      color: var(--accent);
+    }
+
+    .legal a:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    .footer {
+      padding: var(--space-8) 0 var(--space-12);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-12);
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      justify-content: center;
+      margin: var(--space-4) 0;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+    }
+
+    .footer-links a:hover {
+      color: var(--accent);
+    }
+
+    .tm {
+      font-size: 0.65em;
+      vertical-align: super;
+      line-height: 1;
+    }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .section {
+        padding: var(--space-8) 0;
+      }
+
+      .hero {
+        padding: var(--space-8) 0 var(--space-6);
+      }
+
+      .cta-group {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 320px;
+      }
+
+      .showcase-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .arch-step {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    /* Accessibility */
+    a:focus-visible,
+    button:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate {
+      animation: fadeIn 300ms ease-out forwards;
+      opacity: 0;
+    }
+
+    .animate-delay-1 {
+      animation-delay: 100ms;
+    }
+
+    .animate-delay-2 {
+      animation-delay: 200ms;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="/" class="logo" aria-label="Micro Creations home">
+        <span>Micro Creations</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#platform" class="btn btn-ghost"
+          style="font-size: 0.875rem;">ContextLoom</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge animate">
+        <span>🚀</span>
+        <span>Research & Development</span>
+      </div>
+      <h1 class="animate animate-delay-1">
+        Explainable Repo Intelligence
+      </h1>
+      <p class="animate animate-delay-2">
+        ContextLoom helps developers understand, navigate, and query codebases with transparency. Hybrid
+        retrieval. Zero cloud dependency.
+      </p>
+
+      <div class="cta-group animate animate-delay-3">
+        <a href="https://github.com/contextloom" class="btn btn-primary" target="_blank" rel="noopener">Explore on
+          GitHub</a>
+        <a href="#platform" class="btn btn-secondary">Learn More ↓</a>
+        <!-- <a href="https://discord.gg/contextloom" class="btn btn-ghost" target="_blank" rel="noopener">Join Community</a> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Platform Showcase -->
+  <section class="section" id="platform">
+    <div class="container">
+      <div class="showcase animate">
+        <div class="showcase-header">
+          <div class="showcase-icon">⚡</div>
+          <div class="showcase-title">ContextLoom Platform</div>
+        </div>
+        <div class="showcase-grid">
+          <div class="showcase-item">
+            <div class="showcase-icon">🔍</div>
+            <div class="showcase-content">
+              <h4>Hybrid Search</h4>
+              <p>Combine exact token matching with semantic understanding. Get precise results without losing context.
+              </p>
+            </div>
+          </div>
+          <div class="showcase-item">
+            <div class="showcase-icon">🔐</div>
+            <div class="showcase-content">
+              <h4>Local-First</h4>
+              <p>Your code stays on your machine. Embeddings generated locally via Ollama. No telemetry, no cloud sync.
+              </p>
+            </div>
+          </div>
+          <div class="showcase-item">
+            <div class="showcase-icon">🧠</div>
+            <div class="showcase-content">
+              <h4>Explainable Results</h4>
+              <p>See why a result ranked highly. Transparent scoring: vector similarity + keyword match + symbol boost.
+              </p>
+            </div>
+          </div>
+          <div class="showcase-item">
+            <div class="showcase-icon">🧩</div>
+            <div class="showcase-content">
+              <h4>Multi-Workspace</h4>
+              <p>Isolated indices per repository. Switch projects instantly without reindexing or context loss.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Values -->
+  <section class="section" style="background: var(--surface-2);">
+    <div class="container">
+      <h2 class="text-center" style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6);">
+        Built for Transparency
+      </h2>
+
+      <div class="values">
+        <div class="value-card animate">
+          <div class="value-icon">🎯</div>
+          <h3>Precision You Can Trust</h3>
+          <p>Query <code>RepoHandler</code> and get the class definition — not unrelated property getters. Our hybrid
+            approach balances lexical exactness with semantic understanding.</p>
+        </div>
+        <div class="value-card animate animate-delay-1">
+          <div class="value-icon">👁️</div>
+          <h3>See the Why</h3>
+          <p>Every result includes a score breakdown. Understand how vector similarity, keyword matches, and symbol
+            boosts contributed to ranking.</p>
+        </div>
+        <div class="value-card animate animate-delay-2">
+          <div class="value-icon">⚙️</div>
+          <h3>Configurable Per Project</h3>
+          <p>.repo-awareness.yaml lets you tune thresholds, weights, and skip patterns per repository. One platform,
+            many workflows.</p>
+        </div>
+        <div class="value-card animate animate-delay-3">
+          <div class="value-icon">🛡️</div>
+          <h3>Enterprise-Ready Foundations</h3>
+          <p>Session isolation, content-hash caching, graceful fallbacks, and audit-ready logging. Built for real-world
+            development teams.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Simple Architecture -->
+  <section class="section">
+    <div class="container">
+      <h2 class="text-center" style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6);">
+        How It Works
+      </h2>
+
+      <div class="architecture">
+        <div class="arch-title">From Query to Insight</div>
+        <div class="arch-steps">
+          <div class="arch-step">
+            <div class="arch-num">1</div>
+            <div><strong>You ask:</strong> "Where is RepoHandler defined?"</div>
+          </div>
+          <div class="arch-step">
+            <div class="arch-num">2</div>
+            <div><strong>Platform searches:</strong> Exact symbols + semantic meaning + your active file context</div>
+          </div>
+          <div class="arch-step">
+            <div class="arch-num">3</div>
+            <div><strong>You get:</strong> Ranked results with transparent scoring — no black box</div>
+          </div>
+        </div>
+      </div>
+
+      <!--<div class="text-center" style="margin-top: var(--space-6);">
+        <a href="https://github.com/contextloom/core" class="btn btn-secondary" target="_blank" rel="noopener">
+          View Technical Overview →
+        </a>
+      </div>-->
+
+    </div>
+  </section>
+
+  <!-- Demo Teaser (VS Code Extension Placeholder) -->
+  <!-- <section class="section">
+    <div class="container">
+      <div class="demo-teaser animate">
+        <h3>🎬 Interactive Demo Coming Soon</h3>
+        <p>Experience ContextLoom inside your editor. Type a query, see ranked results with explainable scoring, and
+          jump directly to code.</p>
+
+        <div class="demo-mockup">
+          <div style="color: var(--accent); margin-bottom: var(--space-2);">// VS Code Extension Preview</div>
+          <div>❯ query: "RepoHandler definition"</div>
+          <div style="margin: var(--space-3) 0; padding-left: var(--space-3); border-left: 2px solid var(--border);">
+            <div>✓ app/scanner.py:42</div>
+            <div style="color: var(--text-muted); font-size: 0.75rem;">class RepoHandler(FileSystemEventHandler)</div>
+            <div style="color: var(--success); font-size: 0.75rem; margin-top: 2px;">score: 0.89 [vector:0.66 +
+              keyword:0.95 + symbol:0.15]</div>
+          </div>
+          <div style="color: var(--text-muted); font-size: 0.75rem;">[Press Enter to jump to file]</div>
+        </div>
+
+        <p class="text-muted" style="margin-top: var(--space-4); font-size: 0.875rem;">
+          Follow <a href="https://github.com/contextloom/vscode" target="_blank"
+            rel="noopener">github.com/contextloom/vscode</a> for updates.
+        </p>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Licensing Clarity -->
+  <!--<section class="section" style="background: var(--surface-2);">
+    <div class="container">
+      <h2 class="text-center" style="font-size: var(--text-2xl); font-weight: 700; margin-bottom: var(--space-6);">
+        Open Where It Matters
+      </h2>
+
+      <div class="licensing">
+        <strong>Transparent Component Licensing</strong>
+        <p style="margin-bottom: var(--space-4);">We believe in openness where it empowers developers, and protection
+          where it sustains innovation.</p>
+
+        <div class="licensing-grid">
+          <div class="licensing-item">
+            <span class="licensing-icon">✓</span>
+            <div><strong>Open Interfaces:</strong> API contracts, config schemas, and integration points are public and
+              versioned.</div>
+          </div>
+          <div class="licensing-item">
+            <span class="licensing-icon">✓</span>
+            <div><strong>Community Integrations:</strong> VS Code extension, CLI tooling, and plugin APIs will be open
+              source.</div>
+          </div>
+          <div class="licensing-item">
+            <span class="licensing-icon">✓</span>
+            <div><strong>Transparent Algorithms:</strong> Scoring logic, hybrid blending, and ranking formulas are
+              documented and auditable.</div>
+          </div>
+          <div class="licensing-item">
+            <span class="licensing-icon">⚙️</span>
+            <div><strong>Core Engine:</strong> The hybrid retrieval engine and session management are proprietary to
+              ensure performance, security, and sustainable development.</div>
+          </div>
+        </div>
+      </div>
+
+      
+    </div>
+  </section>-->
+
+  <section class="section" style="background: var(--surface-2);">
+    <div class="container">
+  
+      <div class="licensing">
+  
+        <strong>Current Status</strong>
+  
+        <p>
+          ContextLoom is currently in active research and development.
+        </p>
+  
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Legal / IP -->
+  <section class="section">
+    <div class="container">
+      <div class="legal">
+        <strong>Legal & Intellectual Property</strong>
+        <strong>Company:</strong> Micro Creations Ltd, a software development company, a software development company registered in England and Wales.<br>
+        <strong>Registration No.:</strong> 07297491<br>
+        <strong>Registered Office:</strong> 26 Cecilian Drive, Barkby, Leicester, England, LE7 3AP<br>
+        <strong>Product:</strong> ContextLoom — an explainable repo intelligence platform.<br>
+        <strong>Trademark:</strong> "ContextLoom" is a trademark of Micro Creations Ltd.<br>
+        <strong>First Use:</strong> Public record of first use and cryptographic proof: <a
+          href="https://github.com/contextloom/LEGAL/blob/main/FIRST_USE.md" target="_blank"
+          rel="noopener">github.com/contextloom/LEGAL</a>.<br>
+        <!--<strong>Code Status:</strong> Core engine is proprietary software. Community integrations and interfaces are
+        open source. Early access by invitation only.<br> -->
+        <strong>Privacy:</strong> No telemetry. No data collection. Your code and queries remain on your machine.<br>
+        <strong>Contact:</strong> For more info: <a
+          href="mailto:anis@microcreations.co.uk">anis@microcreations.co.uk</a>.
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/contextloom" target="_blank" rel="noopener">GitHub</a>
+        <!--<a href="https://discord.gg/contextloom" target="_blank" rel="noopener">Discord</a>
+        <a href="https://twitter.com/contextloom_dev" target="_blank" rel="noopener">Twitter/X</a> -->
+        <a href="mailto:anis@microcreations.co.uk">Contact</a>
+      </div>
+      <p>
+        © <span id="year"></span> Micro Creations Ltd. All rights reserved.<br>
+        ContextLoom is a trademark of Micro Creations Ltd.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Subtle fade-in on scroll (respects reduced-motion)
+    if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+      document.querySelectorAll('.animate').forEach((el, i) => {
+        setTimeout(() => { el.style.opacity = '1'; }, 100 * i);
+      });
+    }
+  </script>
+</body>
+
+</html>
